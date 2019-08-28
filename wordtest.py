@@ -3,8 +3,9 @@
 import sys, sqlite3
 from collections import namedtuple
 from pprint import pprint
+import random
 
-conn = sqlite3.connect("./wnjpn.db")
+conn = sqlite3.connect("./wnjpn.db", check_same_thread=False)
 
 Word = namedtuple('Word', 'wordid lang lemma pron pos')
 
@@ -42,17 +43,19 @@ def getWordsFromSenses(sense, lang="jpn"):
 def getSynonym (word):
     synonym = {}
     words = getWords(word)
+    synonym_selected= {}
+    synonym = synonym_selected
     if words:
         for w in words:
-            sense = getSenses(w)
-            s = getWordsFromSenses(sense)
-            synonym = dict(list(synonym.items()) + list(s.items()))
+          sense = getSenses(w)
+          s = getWordsFromSenses(sense)
+          synonym = dict(list(synonym.items()) + list(s.items()))
+          print("synonym: ", synonym.items(), "s: ", s.items())
+          print("synonym: ", type(synonym.items()), "s: ", type(s.items()))
+        for v in synonym:
+          synonym_selected = random.choice(v)
+          print(random.choice(v))
     return synonym
 
 
-if __name__ == '__main__':
-    if len(sys.argv) >= 2:
-        synonym = getSynonym(sys.argv[1])
-        pprint(synonym)
-    else:
-        print("You need at least 1 argument as a word like below.\nExample:\n  $ python3 wordnet_jp 楽しい")
+

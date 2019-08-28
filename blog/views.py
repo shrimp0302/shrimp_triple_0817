@@ -5,6 +5,7 @@ from .models import Document
 import cv2
 from django.conf import settings
 from detection import google_vision_api
+from wordtest import getSynonym
 
 def index(request):
     if request.method == 'POST':
@@ -22,11 +23,14 @@ def index(request):
         gray(input_path,output_path)
         label = google_vision_api(output_path)
         print("labels:", label)
+        description = obj.description
+        synonym = getSynonym(description)
 
     return render(request, 'blog/post_list.html', {
         'form': form,
         'obj':obj,
         'labels': label,
+        'synonym': synonym,
     })
 
 
